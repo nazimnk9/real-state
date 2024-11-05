@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 //CVKXUyi3VVYqh4qx
 export const DATABASE = "mongodb+srv://real-state:CVKXUyi3VVYqh4qx@real-state.nsln4hx.mongodb.net/?retryWrites=true&w=majority&appName=real-state";
-export const EMAIL_FROM = "mdnazimahmed64@gmail.com";
+export const EMAIL_FROM = 'Real State Bangladesh <mdnazimahmed64@gmail.com>';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCer3emZf-HyWa_dzEOcthSPKtIYsBKX5A",
