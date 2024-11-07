@@ -37,7 +37,7 @@ export const preRegister = async (req, res) => {
   // create jwt with email and password then email as clickable link
   // only when user click on that email link, registeration completes
   try {
-    console.log(req.body);
+    //console.log(req.body);
      const { email, password } = req.body;
 
     // if (!Validator.validate(email)) {
@@ -55,9 +55,9 @@ export const preRegister = async (req, res) => {
     // }
     // //const result = await createUserWithEmailAndPassword(auth, email, password);
     
-    // const token = jwt.sign({ email, password }, config.JWT_SECRET, {
-    //   expiresIn: "1h",
-    // });
+    const token = jwt.sign({ email, password }, config.JWT_SECRET, {
+      expiresIn: "1h",
+    });
     // //console.log(token);
 
     const transporter = nodemailer.createTransport({
@@ -71,18 +71,22 @@ export const preRegister = async (req, res) => {
     });
 
     // // Send email using Nodemailer
-    const mailOptions = {
-      from: config.EMAIL_FROM,
-      to: email,
-      subject: 'Welcome to Real-State',
-      html:
-        `
-          <p>Please click the link below to activate your account.</p>
+    // const mailOptions = {
+    //   from: config.EMAIL_FROM,
+    //   to: email,
+    //   subject: 'Welcome to Real-State',
+    //   html:
+    //     `
+    //       <p>Please click the link below to activate your account.</p>
+    //       <a href="${config.CLIENT_URL}/auth/account-activate/${token}">Activate my account</a>
           
-        `,
-    };
+    //     `,
+    // };
 
-    transporter.sendMail(mailOptions, (error, info) => {
+    transporter.sendMail(emailTemplate(email, `
+      <p>Please click the link below to activate your account.</p>
+          <a href="${config.CLIENT_URL}/auth/account-activate/${token}">Activate my account</a>
+      `,config.REPLY_TO,"Activate Your Account"), (error, info) => {
       if (error) {
         console.log(error);
         return res.json({ ok: false });
@@ -97,11 +101,13 @@ export const preRegister = async (req, res) => {
   }
 };
 
-// export const register = async (req, res) => {
-//   try {
-//     //console.log(req.body);
-//     const { email, password } = jwt.verify(req.body.token, config.JWT_SECRET);
-
+export const register = async (req, res) => {
+   try {
+       console.log(req.body);
+       const { email, password } = jwt.verify(req.body.token, config.JWT_SECRET);
+       //const decoded = jwt.verify(req.body.token, config.JWT_SECRET);
+       //console.log(decoded);
+       
 //     const userExist = await User.findOne({ email });
 //     if (userExist) {
 //       return res.json({ error: "Email is taken" });
@@ -114,11 +120,11 @@ export const preRegister = async (req, res) => {
 //       password: hashedPassword,
 //     }).save();
 //     tokenAndUserResponse(req, res, user);
-//   } catch (err) {
-//     console.log(err);
-//     return res.json({ error: "Something went wrong. Try again." });
-//   }
-// };
+   } catch (err) {
+     console.log(err);
+     return res.json({ error: "Something went wrong. Try again." });
+   }
+};
 
 // export const login = async (req, res) => {
 //   try {
