@@ -34,7 +34,7 @@ export const emailTemplate = (email, content, replyTo, subject) => {
     // },
     from: config.EMAIL_FROM,
     to: [email],
-    subject: "Welcome to Real-State",
+    subject: subject,
     html: ` <div style="${style}">
               <h1>Welcome to Real Estate</h1>
               ${content}

@@ -38,7 +38,7 @@ export const preRegister = async (req, res) => {
   // only when user click on that email link, registeration completes
   try {
     //console.log(req.body);
-     const { email, password } = req.body;
+    const { email, password } = req.body;
 
     if (!Validator.validate(email)) {
       return res.json({ error: "A valid email is required" });
@@ -54,7 +54,7 @@ export const preRegister = async (req, res) => {
       return res.json({ error: "Email is taken" });
     }
     // //const result = await createUserWithEmailAndPassword(auth, email, password);
-    
+
     const token = jwt.sign({ email, password }, config.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -63,10 +63,10 @@ export const preRegister = async (req, res) => {
     const transporter = nodemailer.createTransport({
       /* Configure your email transport settings here */
       // For example, if you're using Gmail as your SMTP server:
-      service: 'Gmail',
+      service: "Gmail",
       auth: {
-        user: 'mdnazimahmed64@gmail.com',
-        pass: 'wrdrygfjnqgygixe',
+        user: "mdnazimahmed64@gmail.com",
+        pass: "wrdrygfjnqgygixe",
       },
     });
 
@@ -79,22 +79,30 @@ export const preRegister = async (req, res) => {
     //     `
     //       <p>Please click the link below to activate your account.</p>
     //       <a href="${config.CLIENT_URL}/auth/account-activate/${token}">Activate my account</a>
-          
+
     //     `,
     // };
 
-    transporter.sendMail(emailTemplate(email, `
+    transporter.sendMail(
+      emailTemplate(
+        email,
+        `
       <p>Please click the link below to activate your account.</p>
       <a href="${config.CLIENT_URL}/auth/account-activate/${token}">Activate my account</a>
-      `,config.REPLY_TO,"Activate Your Account"), (error, info) => {
-      if (error) {
-        console.log(error);
-        return res.json({ ok: false });
-      } else {
-        console.log(info);
-        return res.json({ ok: true });
+      `,
+        config.REPLY_TO,
+        "Activate Your Account"
+      ),
+      (error, info) => {
+        if (error) {
+          console.log(error);
+          return res.json({ ok: false });
+        } else {
+          console.log(info);
+          return res.json({ ok: true });
+        }
       }
-    });
+    );
   } catch (err) {
     console.log(err);
     return res.json({ error: "Something went wrong. Try again." });
@@ -102,73 +110,73 @@ export const preRegister = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-   try {
-       console.log(req.body);
-       const { email, password } = jwt.verify(req.body.token, config.JWT_SECRET);
-       //const decoded = jwt.verify(req.body.token, config.JWT_SECRET);
-       //console.log(decoded);
-       
-//     const userExist = await User.findOne({ email });
-//     if (userExist) {
-//       return res.json({ error: "Email is taken" });
-//     }
-//     //const { email, password } = jwt.verify(req.body.token, config.JWT_SECRET);
-       const hashedPassword = await hashPassword(password);
-       const user = await new User({
-          username: nanoid(6),
-          email,
-          password: hashedPassword,
-       }).save();
-       const token = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
-        expiresIn: "1h",
-      });
-       const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
-        expiresIn: "7d",
-      });
-      user.password = undefined
-      user.resetCode = undefined
-      return res.json({
-        token,
-        refreshToken,
-        user,
-      })
-//     tokenAndUserResponse(req, res, user);
-   } catch (err) {
-     console.log(err);
-     return res.json({ error: "Something went wrong. Try again." });
-   }
+  try {
+    console.log(req.body);
+    const { email, password } = jwt.verify(req.body.token, config.JWT_SECRET);
+    //const decoded = jwt.verify(req.body.token, config.JWT_SECRET);
+    //console.log(decoded);
+
+    //     const userExist = await User.findOne({ email });
+    //     if (userExist) {
+    //       return res.json({ error: "Email is taken" });
+    //     }
+    //     //const { email, password } = jwt.verify(req.body.token, config.JWT_SECRET);
+    const hashedPassword = await hashPassword(password);
+    const user = await new User({
+      username: nanoid(6),
+      email,
+      password: hashedPassword,
+    }).save();
+    const token = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    user.password = undefined;
+    user.resetCode = undefined;
+    return res.json({
+      token,
+      refreshToken,
+      user,
+    });
+    //     tokenAndUserResponse(req, res, user);
+  } catch (err) {
+    console.log(err);
+    return res.json({ error: "Something went wrong. Try again." });
+  }
 };
 
- export const login = async (req, res) => {
-   try {
-     const { email, password } = req.body;
-//     // 1 find user by email
-     const user = await User.findOne({ email });
-//     // 2 compare password
-     const match = await comparePassword(password, user.password);
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    //     // 1 find user by email
+    const user = await User.findOne({ email });
+    //     // 2 compare password
+    const match = await comparePassword(password, user.password);
     if (!match) {
       return res.json({ error: "Wrong password" });
     }
     const token = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
       expiresIn: "1h",
     });
-     const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
+    const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
       expiresIn: "7d",
     });
-    user.password = undefined
-      user.resetCode = undefined
-      return res.json({
-        token,
-        refreshToken,
-        user,
-      })
+    user.password = undefined;
+    user.resetCode = undefined;
+    return res.json({
+      token,
+      refreshToken,
+      user,
+    });
 
-//     tokenAndUserResponse(req, res, user);
+    //     tokenAndUserResponse(req, res, user);
   } catch (err) {
     console.log(err);
     return res.json({ error: "Something went wrong. Try again." });
   }
- };
+};
 
 // /* export const forgotPassword = async (req, res) => {
 //   try {
@@ -204,16 +212,16 @@ export const register = async (req, res) => {
 // }; */
 
 export const forgotPassword = async (req, res) => {
-   try {
-     const { email } = req.body;
+  try {
+    const { email } = req.body;
 
-     const user = await User.findOne({ email });
-     if (!user) {
-       return res.json({ error: "Could not find user with that email" });
-     } else {
-       const resetCode = nanoid();
-       user.resetCode = resetCode;
-       await user.save();
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.json({ error: "Could not find user with that email" });
+    } else {
+      const resetCode = nanoid();
+      user.resetCode = resetCode;
+      await user.save();
 
       const token = jwt.sign({ resetCode }, config.JWT_SECRET, {
         expiresIn: "1h",
@@ -222,68 +230,89 @@ export const forgotPassword = async (req, res) => {
       const transporter = nodemailer.createTransport({
         /* Configure your email transport settings here */
         // For example, if you're using Gmail as your SMTP server:
-        service: 'Gmail',
+        service: "Gmail",
         auth: {
-          user: 'mdnazimahmed64@gmail.com',
-          pass: 'wrdrygfjnqgygixe',
+          user: "mdnazimahmed64@gmail.com",
+          pass: "wrdrygfjnqgygixe",
         },
       });
-      transporter.sendMail(emailTemplate(email, `
+      transporter.sendMail(
+        emailTemplate(
+          email,
+          `
         <p>Please click the link below to access your account.</p>
         <a href="${config.CLIENT_URL}/auth/access-account/${token}">Access my account</a>
-        `,config.REPLY_TO,"Access Your Account"), (error, info) => {
-        if (error) {
-          console.log(error);
-          return res.json({ ok: false });
-        } else {
-          console.log(info);
-          return res.json({ ok: true });
+        `,
+          config.REPLY_TO,
+          "Access Your Account"
+        ),
+        (error, info) => {
+          if (error) {
+            console.log(error);
+            return res.json({ ok: false });
+          } else {
+            console.log(info);
+            return res.json({ ok: true });
+          }
         }
-      });
+      );
 
-//       const mailOptions = {
-//         from: 'mdnazimahmed64@gmail.com', // Sender's email address
-//         to: email, // Recipient's email address
-//         subject: 'Access your account',
-//         html: `
-//           <p>Please click the link below to access your account.</p>
-//           <a href="${config.CLIENT_URL}/auth/access-account/${token}">Access my account</a>
-//         `,
-//       };
+      //       const mailOptions = {
+      //         from: 'mdnazimahmed64@gmail.com', // Sender's email address
+      //         to: email, // Recipient's email address
+      //         subject: 'Access your account',
+      //         html: `
+      //           <p>Please click the link below to access your account.</p>
+      //           <a href="${config.CLIENT_URL}/auth/access-account/${token}">Access my account</a>
+      //         `,
+      //       };
 
-//       transporter.sendMail(mailOptions, (error, info) => {
-//         if (error) {
-//           console.log(error);
-//           return res.json({ ok: false });
-//         } else {
-//           console.log('Email sent: ' + info.response);
-//           return res.json({ token });
-//         }
-//       });
-     }
+      //       transporter.sendMail(mailOptions, (error, info) => {
+      //         if (error) {
+      //           console.log(error);
+      //           return res.json({ ok: false });
+      //         } else {
+      //           console.log('Email sent: ' + info.response);
+      //           return res.json({ token });
+      //         }
+      //       });
+    }
   } catch (err) {
     console.log(err);
     return res.json({ error: "Something went wrong. Try again." });
   }
- };
+};
 
+export const accessAccount = async (req, res) => {
+  try {
+    //     // const { email } = req.body;
+    //     // // const user = await User.findOne({ email });
+    //     // //const { resetCode } = jwt.verify(req.body.resetCode, config.JWT_SECRET);
+    //     // const user = await User.findOneAndUpdate({ email });
+    const { resetCode } = jwt.verify(req.body.resetCode, config.JWT_SECRET);
 
-// export const accessAccount = async (req, res) => {
-//   try {
-//     // const { email } = req.body;
-//     // // const user = await User.findOne({ email });
-//     // //const { resetCode } = jwt.verify(req.body.resetCode, config.JWT_SECRET);
-//     // const user = await User.findOneAndUpdate({ email });
-//     const { resetCode } = jwt.verify(req.body.resetCode, config.JWT_SECRET);
+    const user = await User.findOneAndUpdate({ resetCode }, { resetCode: "" });
 
-//     const user = await User.findOneAndUpdate({ resetCode }, { resetCode: "" });
+    const token = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    user.password = undefined;
+    user.resetCode = undefined;
+    return res.json({
+      token,
+      refreshToken,
+      user,
+    });
 
-//     tokenAndUserResponse(req, res, user);
-//   } catch (err) {
-//     console.log(err);
-//     return res.json({ error: "Something went wrong. Try again." });
-//   }
-// };
+    //     tokenAndUserResponse(req, res, user);
+  } catch (err) {
+    console.log(err);
+    return res.json({ error: "Something went wrong. Try again." });
+  }
+};
 
 // export const refreshToken = async (req, res) => {
 //   try {
