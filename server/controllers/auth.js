@@ -10,22 +10,22 @@ import nodemailer from "nodemailer";
 
 //const auth = getAuth();
 
-// export const tokenAndUserResponse = (req, res, user) => {
-//   const token = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
-//     expiresIn: "1h",
-//   });
-//   const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
-//     expiresIn: "7d",
-//   });
+export const tokenAndUserResponse = (req, res, user) => {
+  const token = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+  const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
+    expiresIn: "7d",
+  });
 
-//   user.password = undefined;
-//   user.resetCode = undefined;
-//   return res.json({
-//     token,
-//     refreshToken,
-//     user,
-//   });
-// };
+  user.password = undefined;
+  user.resetCode = undefined;
+  return res.json({
+    token,
+    refreshToken,
+    user,
+  });
+};
 
 export const welcome = (req, res) => {
   res.json({
@@ -116,10 +116,10 @@ export const register = async (req, res) => {
     //const decoded = jwt.verify(req.body.token, config.JWT_SECRET);
     //console.log(decoded);
 
-    //     const userExist = await User.findOne({ email });
-    //     if (userExist) {
-    //       return res.json({ error: "Email is taken" });
-    //     }
+    const userExist = await User.findOne({ email });
+      if (userExist) {
+        return res.json({ error: "Email is taken" });
+    }
     //     //const { email, password } = jwt.verify(req.body.token, config.JWT_SECRET);
     const hashedPassword = await hashPassword(password);
     const user = await new User({
@@ -127,20 +127,8 @@ export const register = async (req, res) => {
       email,
       password: hashedPassword,
     }).save();
-    const token = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-    const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-    user.password = undefined;
-    user.resetCode = undefined;
-    return res.json({
-      token,
-      refreshToken,
-      user,
-    });
-    //     tokenAndUserResponse(req, res, user);
+    
+    tokenAndUserResponse(req, res, user);
   } catch (err) {
     console.log(err);
     return res.json({ error: "Something went wrong. Try again." });
@@ -157,21 +145,7 @@ export const login = async (req, res) => {
     if (!match) {
       return res.json({ error: "Wrong password" });
     }
-    const token = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-    const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-    user.password = undefined;
-    user.resetCode = undefined;
-    return res.json({
-      token,
-      refreshToken,
-      user,
-    });
-
-    //     tokenAndUserResponse(req, res, user);
+    tokenAndUserResponse(req, res, user);
   } catch (err) {
     console.log(err);
     return res.json({ error: "Something went wrong. Try again." });
@@ -293,19 +267,7 @@ export const accessAccount = async (req, res) => {
 
     const user = await User.findOneAndUpdate({ resetCode }, { resetCode: "" });
 
-    const token = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-    const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-    user.password = undefined;
-    user.resetCode = undefined;
-    return res.json({
-      token,
-      refreshToken,
-      user,
-    });
+    tokenAndUserResponse(req, res, user);
 
     //     tokenAndUserResponse(req, res, user);
   } catch (err) {
@@ -314,59 +276,60 @@ export const accessAccount = async (req, res) => {
   }
 };
 
-// export const refreshToken = async (req, res) => {
-//   try {
-//     const { _id } = jwt.verify(req.headers.refresh_token, config.JWT_SECRET);
-//     const user = await User.findById(_id);
-//     tokenAndUserResponse(req, res, user);
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(403).json({ error: "Refresh token failed" });
-//   }
-// };
+export const refreshToken = async (req, res) => {
+   try {
+    const { _id } = jwt.verify(req.headers.refresh_token, config.JWT_SECRET);
+    const user = await User.findById(_id);
+    //tokenAndUserResponse(req, res, user);
+    tokenAndUserResponse(req, res, user);
+   } catch (err) {
+     console.log(err);
+     return res.status(403).json({ error: "Refresh token failed" });
+   }
+ };
 
-// export const currentUser = async (req, res) => {
-//   try {
-//     const user = await User.findById(req.user._id);
-//     user.password = undefined;
-//     user.resetCode = undefined;
-//     return res.json({ user,});
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(403).json({ error: "Unauthorized" });
-//   }
-// };
+export const currentUser = async (req, res) => {
+   try {
+     const user = await User.findById(req.user._id);
+     user.password = undefined;
+     user.resetCode = undefined;
+     return res.json(user);
+   } catch (err) {
+    console.log(err);
+    return res.status(403).json({ error: "Unauthorized" });
+   }
+ };
 
-// export const publicProfile = async(req, res) => {
-//   try{
-//     const user = await User.findOne({ username: req.params.username });
-//     user.password = undefined;
-//     user.resetCode = undefined;
-//     return res.json({ user,});
-//   }catch(err){
-//     console.log(err);
-//     return res.json({ error: "User not found."});
-//   }
-// };
+export const publicProfile = async(req, res) => {
+   try{
+     const user = await User.findOne({ username: req.params.username });
+    user.password = undefined;
+    user.resetCode = undefined;
+    return res.json(user);
+   }catch(err){
+    console.log(err);
+    return res.json({ error: "User not found."});
+   }
+};
 
-// export const updatePassword = async (req, res) => {
-//   try {
-//     const {password} = req.body;
-//     if(!password){
-//       return res.json({ error: "Password is required!"});
-//     }
-//     if (password && password.length < 8) {
-//       return res.json({ error: "Password should be minimum 8 characters" });
-//     }
-//     const user = await User.findByIdAndUpdate(req.user._id, {
-//       password: await hashPassword(password),
-//     });
-//     res.json({ ok: true });
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(403).json({ error: "Unauthorized" });
-//   }
-// };
+export const updatePassword = async (req, res) => {
+   try {
+     const {password} = req.body;
+     if(!password){
+       return res.json({ error: "Password is required!"});
+     }
+    if (password && password?.length < 8) {
+      return res.json({ error: "Password should be minimum 8 characters" });
+    }
+    const user = await User.findByIdAndUpdate(req.user._id, {
+      password: await hashPassword(password),
+    });
+    res.json({ ok: true });
+   } catch (err) {
+    console.log(err);
+    return res.status(403).json({ error: "Unauthorized" });
+  }
+};
 
 // export const updateProfile = async (req, res) =>{
 //   try{
