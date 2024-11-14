@@ -117,8 +117,8 @@ export const register = async (req, res) => {
     //console.log(decoded);
 
     const userExist = await User.findOne({ email });
-      if (userExist) {
-        return res.json({ error: "Email is taken" });
+    if (userExist) {
+      return res.json({ error: "Email is taken" });
     }
     //     //const { email, password } = jwt.verify(req.body.token, config.JWT_SECRET);
     const hashedPassword = await hashPassword(password);
@@ -127,7 +127,7 @@ export const register = async (req, res) => {
       email,
       password: hashedPassword,
     }).save();
-    
+
     tokenAndUserResponse(req, res, user);
   } catch (err) {
     console.log(err);
@@ -277,47 +277,47 @@ export const accessAccount = async (req, res) => {
 };
 
 export const refreshToken = async (req, res) => {
-   try {
+  try {
     const { _id } = jwt.verify(req.headers.refresh_token, config.JWT_SECRET);
     const user = await User.findById(_id);
     //tokenAndUserResponse(req, res, user);
     tokenAndUserResponse(req, res, user);
-   } catch (err) {
-     console.log(err);
-     return res.status(403).json({ error: "Refresh token failed" });
-   }
- };
+  } catch (err) {
+    console.log(err);
+    return res.status(403).json({ error: "Refresh token failed" });
+  }
+};
 
 export const currentUser = async (req, res) => {
-   try {
-     const user = await User.findById(req.user._id);
-     user.password = undefined;
-     user.resetCode = undefined;
-     return res.json(user);
-   } catch (err) {
-    console.log(err);
-    return res.status(403).json({ error: "Unauthorized" });
-   }
- };
-
-export const publicProfile = async(req, res) => {
-   try{
-     const user = await User.findOne({ username: req.params.username });
+  try {
+    const user = await User.findById(req.user._id);
     user.password = undefined;
     user.resetCode = undefined;
     return res.json(user);
-   }catch(err){
+  } catch (err) {
     console.log(err);
-    return res.json({ error: "User not found."});
-   }
+    return res.status(403).json({ error: "Unauthorized" });
+  }
+};
+
+export const publicProfile = async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    user.password = undefined;
+    user.resetCode = undefined;
+    return res.json(user);
+  } catch (err) {
+    console.log(err);
+    return res.json({ error: "User not found." });
+  }
 };
 
 export const updatePassword = async (req, res) => {
-   try {
-     const {password} = req.body;
-     if(!password){
-       return res.json({ error: "Password is required!"});
-     }
+  try {
+    const { password } = req.body;
+    if (!password) {
+      return res.json({ error: "Password is required!" });
+    }
     if (password && password?.length < 8) {
       return res.json({ error: "Password should be minimum 8 characters" });
     }
@@ -325,26 +325,26 @@ export const updatePassword = async (req, res) => {
       password: await hashPassword(password),
     });
     res.json({ ok: true });
-   } catch (err) {
+  } catch (err) {
     console.log(err);
     return res.status(403).json({ error: "Unauthorized" });
   }
 };
 
-export const updateProfile = async (req, res) =>{
-   try{
+export const updateProfile = async (req, res) => {
+  try {
     const user = await User.findByIdAndUpdate(req.user._id, req.body, {
       new: true,
     });
     user.password = undefined;
     user.resetCode = undefined;
     res.json(user);
-   }catch(err){
+  } catch (err) {
     console.log(err);
-    if(err.codeName === "DuplicateKey"){
+    if (err.codeName === "DuplicateKey") {
       return res.json({ error: "Username or email is already taken" });
-    }else{
+    } else {
       return res.status(403).json({ error: "Unauthorized" });
-     }
-   }
- };
+    }
+  }
+};
