@@ -1,0 +1,9 @@
+.active {
+    color: #fff;
+    background-color: rgb(34, 99, 196);
+    transition: all linear 0.23s;
+}
+
+.active:hover {
+    color: #fff;
+}
