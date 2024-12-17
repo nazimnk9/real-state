@@ -22,7 +22,7 @@ export default function AdCreate() {
         <div>
             <h1 className="display-1 bg-primary text-light p-5">Ad Create</h1>
             <Sidebar />
-            <div className="d-flex justify-content-center align-items-center vh-100" style={{marginTop:"-10%"}}>
+            <div className="d-flex justify-content-center align-items-center vh-100" style={{marginTop:"-16%"}}>
                 <div className="col-lg-6">
                     <button onClick={handleSell} className="btn btn-primary btn-lg col-12 p-5"><span className="h2">Sell</span></button>
                     {sell && (<div className="my-1">
