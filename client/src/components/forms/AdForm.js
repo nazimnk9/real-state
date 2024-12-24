@@ -36,6 +36,7 @@
 import { useState } from "react";
 import AsyncSelect from "react-select/async"; // react-select's async select component
 import CurrencyInput from 'react-currency-input-field';
+import ImageUpload from "./ImageUpload";
 
 export default function AdForm({ action, type }) {
     // state
@@ -81,6 +82,7 @@ export default function AdForm({ action, type }) {
     return (
         <>
             <div className="mb-3 form-control">
+                <ImageUpload ad={ad} setAd={setAd} />
                 <AsyncSelect
                     cacheOptions
                     loadOptions={fetchSuggestions}
