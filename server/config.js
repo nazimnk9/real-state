@@ -1,5 +1,6 @@
 // export const DATABASE = "mongodb://127.0.0.1:27017/real_state";
 import { initializeApp } from "firebase/app";
+import { getStorage } from "firebase/storage";
 //CVKXUyi3VVYqh4qx
 export const DATABASE = "mongodb+srv://real-state:CVKXUyi3VVYqh4qx@real-state.nsln4hx.mongodb.net/?retryWrites=true&w=majority&appName=real-state";
 export const EMAIL_FROM = 'Real State Bangladesh <mdnazimahmed64@gmail.com>';
@@ -17,6 +18,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
+export const storage = getStorage(app);
 
 export const JWT_SECRET = 'GGJJJDDKKKGTIYYPYP';
 export const CLIENT_URL = "http://localhost:3000";
