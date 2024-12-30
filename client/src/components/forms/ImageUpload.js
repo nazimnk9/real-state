@@ -2,6 +2,7 @@ import Resizer from "react-image-file-resizer";
 import axios from "axios";
 
 export default function ImageUpload({ ad, setAd }) {
+  
   const handleUpload = async (e) => {
     try {
       let files = e.target.files;
@@ -20,26 +21,12 @@ export default function ImageUpload({ ad, setAd }) {
               100,
               0,
               async (uri) => {
-                try {
-                  // Convert base64 URI to Blob
-                  const byteString = atob(uri.split(",")[1]);
-                  const mimeString = uri.split(",")[0].split(":")[1].split(";")[0];
-                  const ab = new ArrayBuffer(byteString.length);
-                  const ia = new Uint8Array(ab);
-                  for (let i = 0; i < byteString.length; i++) {
-                    ia[i] = byteString.charCodeAt(i);
-                  }
-                  const blob = new Blob([ab], { type: mimeString });
-
-                  // Create FormData to upload the file
-                  const formData = new FormData();
-                  formData.append("image", blob, file.name);
-
+                console.log(uri);
+                
+                try {    
                   // Upload the resized image
-                  const { data } = await axios.post("/upload-image", formData, {
-                    headers: {
-                      "Content-Type": "multipart/form-data",
-                    },
+                  const { data } = await axios.post("/upload-image", {
+                    image:uri,
                   });
 
                   console.log("Uploaded image response:", data);
@@ -51,8 +38,8 @@ export default function ImageUpload({ ad, setAd }) {
                     uploading: false,
                   }));
                 } catch (err) {
-                  console.error("Error during image upload:", err);
-                  setAd((prev) => ({ ...prev, uploading: false }));
+                  console.log("Error during image upload:", err);
+                  setAd({ ...ad, uploading: false });
                 }
               },
               "base64"
