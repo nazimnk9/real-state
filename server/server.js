@@ -17,8 +17,10 @@ mongoose
 
 
 //middlewares
-app.use(express.json({limit: "10mb"}));
+app.use(express.json({ limit: "10mb" })); // Increase limit if base64 strings are large
+
 app.use(morgan("dev"));
+
 app.use(cors());
 //routes middleware
 app.use("/api", authRoutes);
