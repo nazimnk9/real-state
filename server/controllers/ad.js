@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 export const uploadImage = async (res, req) => {
 
   try {
-    console.log(req.body);
+    console.log("hello",req.body);
     // const { image } = req.body;
 
     // //Convert the base64 string to a buffer
