@@ -25,16 +25,9 @@ export default function ImageUpload({ ad, setAd }) {
                 
                 try {    
                   // Upload the resized image
-                  const { data } = await axios.post(
-                    "/upload-image",
-                    { image: uri },
-                    {
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                    }
-                  );
-
+                  //const { data } = await axios.post("/upload-image",{image:uri});
+                   const { data } = await axios.post("/upload-image",{image:uri});
+                  
                   console.log("Uploaded image response:", data);
 
                   // Update ad state with the uploaded photo
