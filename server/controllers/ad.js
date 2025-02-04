@@ -32,7 +32,7 @@ export const uploadImage = async (req, res) => {
     const downloadURL = await getDownloadURL(storageRef);
 
     // Respond with the URL
-    res.status(200).send({ url: downloadURL });
+    res.status(200).send({ Location: downloadURL });
   } catch (err) {
     console.log(err);
     res.status(400).json({ error: "Upload failed. Try again." });

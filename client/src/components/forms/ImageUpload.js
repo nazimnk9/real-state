@@ -1,5 +1,6 @@
 import Resizer from "react-image-file-resizer";
 import axios from "axios";
+import {Avatar} from "antd"
 
 export default function ImageUpload({ ad, setAd }) {
   
@@ -77,6 +78,7 @@ export default function ImageUpload({ ad, setAd }) {
           hidden
         />
       </label>
+      {ad.photos?.map((file) => (<Avatar src={file?.Location} shape="square" size="46" className="ml-2 mb-4" />))}
     </>
   );
 }
