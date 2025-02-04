@@ -57,14 +57,6 @@ app.use(morgan("dev"));
 app.use(express.json({ limit: "10mb" })); // Parses JSON payloads
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true })); // Parses URL-encoded payloads
 
-// app.use((req, res, next) => {
-//     // console.log(`Incoming request: ${req.method} ${req.url}`);
-//     // console.log("Headers:", req.headers);
-//     console.log("Request received in controller:", req);
-//     console.log("Body1:", req.body);
-//     next();
-//   });
-
 // Routes Middleware
 app.use("/api", authRoutes);
 app.use("/api", adRoutes);
