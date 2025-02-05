@@ -1,6 +1,7 @@
 import Resizer from "react-image-file-resizer";
 import axios from "axios";
 import {Avatar} from "antd"
+//import { uploadImage } from "../../../../server/controllers/ad";
 
 export default function ImageUpload({ ad, setAd }) {
   
@@ -53,19 +54,35 @@ export default function ImageUpload({ ad, setAd }) {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (file) => {
+    const answer = window.confirm("Delete Image?");
+    if (!answer) return;
+
+    // Debugging logs
+    console.log("Deleting file:", file);
+    console.log("File Key:", file.Key);
+    console.log("File Location:", file.Location);
+
+    if (!file.Key || !file.Location) {
+      console.error("Error: Missing Key or Location", file);
+      return;
+    }
+
     try {
-      setAd({ ...ad, uploading: true });
+      const { data } = await axios.post("/remove-image", { Key: file.Key, Location: file.Location });
 
-      // Add image deletion logic here if needed
-
-      setAd({ ...ad, uploading: false });
+      if (data?.ok) {
+        setAd((prev) => ({
+          ...prev,
+          photos: prev.photos.filter((p) => p.Key !== file.Key),
+          uploading: false,
+        }));
+      }
     } catch (err) {
       console.error("Error in handleDelete:", err);
       setAd({ ...ad, uploading: false });
     }
   };
-
   return (
     <>
       <label className="btn btn-secondary mb-4">
@@ -78,7 +95,16 @@ export default function ImageUpload({ ad, setAd }) {
           hidden
         />
       </label>
-      {ad.photos?.map((file) => (<Avatar src={file?.Location} shape="square" size="46" className="ml-2 mb-4" />))}
+      {ad.photos?.map((file) => (
+        <Avatar
+          key={file.Key}
+          src={file?.Location}
+          shape="square"
+          size="46"
+          className="ml-2 mb-4"
+          onClick={() => handleDelete(file)}
+        />
+      ))}
     </>
   );
 }

@@ -32,9 +32,28 @@ export const uploadImage = async (req, res) => {
     const downloadURL = await getDownloadURL(storageRef);
 
     // Respond with the URL
-    res.status(200).send({ Location: downloadURL });
+    res.status(200).send({ Location: downloadURL, Key: fileName  });
   } catch (err) {
     console.log(err);
     res.status(400).json({ error: "Upload failed. Try again." });
+  }
+};
+
+export const removeImage = async (req, res) => {
+  try {
+    const { Key, Location } = req.body;
+    if (!Key || !Location) return res.status(400).json({ error: "Missing Key or Location" });
+
+    // Reference the file in Firebase Storage
+    const storage = getStorage(config.app);
+    const fileRef = ref(storage, `images/${Key}`);
+
+    // Delete the file
+    await deleteObject(fileRef);
+
+    res.send({ ok: true });
+  } catch (err) {
+    console.log("Error deleting image:", err);
+    res.status(400).json({ error: "Image deletion failed" });
   }
 };
