@@ -31,7 +31,7 @@ const schema = new Schema(
     },
     description:{},
     postedBy: {type: ObjectId, ref: "User" },
-    sold: {type: boolean, default: false},
+    sold: {type: Boolean, default: false},
     googleMap:{},
     type:{
         type: String,
