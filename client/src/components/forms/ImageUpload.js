@@ -67,7 +67,7 @@ export default function ImageUpload({ ad, setAd }) {
       console.error("Error: Missing Key or Location", file);
       return;
     }
-
+    setAd({ ...ad, uploading: true });
     try {
       const { data } = await axios.post("/remove-image", { Key: file.Key, Location: file.Location });
 
@@ -95,9 +95,9 @@ export default function ImageUpload({ ad, setAd }) {
           hidden
         />
       </label>
-      {ad.photos?.map((file) => (
+      {ad.photos?.map((file,index) => (
         <Avatar
-          key={file.Key}
+          key={index}
           src={file?.Location}
           shape="square"
           size="46"

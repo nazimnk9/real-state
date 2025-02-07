@@ -1,4 +1,4 @@
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL,deleteObject } from "firebase/storage";
 import * as config from "../config.js";
 import { nanoid } from "nanoid";
 
@@ -57,3 +57,13 @@ export const removeImage = async (req, res) => {
     res.status(400).json({ error: "Image deletion failed" });
   }
 };
+
+export const create = async(req, res) => {
+  try{
+    console.log(req.body);
+    
+  }catch(err){
+    res.json({error: "Something went wrong. Try again."})
+    console.log(err);
+  }
+}

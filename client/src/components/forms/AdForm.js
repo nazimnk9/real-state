@@ -1,42 +1,10 @@
-// import { useState } from "react"
-// import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
-// import { GOOGLE_PLACES_KEY } from "../../config";
-// export default function AdForm({action,type}) { 
-//     //state
-//     const [ad,setAd] = useState({
-//         photos:[],
-//         uploading: false,
-//         price:'',
-//         address:'',
-//         bedrooms:'',
-//         bathrooms:'',
-//         carpark:'',
-//         landSize:'',
-//         type:'',
-//         title:'',
-//         description:'',
-//         loading:false,
-//     })
-//     return (
-//         <>
-//         <div className="mb-3 form-control">
-//             <GooglePlacesAutocomplete 
-//                 apiKey={GOOGLE_PLACES_KEY} 
-//                 apiOptions="au"
-//                 selectProps={{defaultInputValue: ad?.address,
-//                     placeholder: "Search for address...",
-//                     onChange:(data)=>console.log(data),
-//                 }}  
-//             />
-//         </div>
-//         </>
-//     )
-//  }
-
 import { useState } from "react";
 import AsyncSelect from "react-select/async"; // react-select's async select component
 import CurrencyInput from 'react-currency-input-field';
 import ImageUpload from "./ImageUpload";
+import axios from "axios";
+import {Navigate, useNavigate} from "react-router-dom"
+import toast from "react-hot-toast"
 
 export default function AdForm({ action, type }) {
     // state
@@ -49,10 +17,11 @@ export default function AdForm({ action, type }) {
         bathrooms: '',
         carpark: '',
         landSize: '',
-        type: '',
         title: '',
         description: '',
         loading: false,
+        type,
+        action,
     });
 
     // Fetch suggestions from OpenStreetMap Nominatim API
@@ -78,6 +47,27 @@ export default function AdForm({ action, type }) {
         }));
         console.log("Selected Address:", selectedOption);
     };
+
+    const handleClick = async()=>{
+        try{
+            setAd({...ad,loading: true});
+            const {data} = await axios.post("/ad",ad)
+            console.log("Ad create response => ",data);
+            
+            if(data?.error){
+                toast.error(data?.error);
+                setAd({...ad,loading: false});
+            }else{
+                toast.success("Ad Created Successfully.")
+                setAd({...ad,loading: false});
+                //navigate("/dashboard")
+            }
+        }catch(err){
+            console.log(err);
+            setAd({...ad,loading: false});
+            
+        }
+    }
 
     return (
         <>
@@ -141,7 +131,7 @@ export default function AdForm({ action, type }) {
             value={ad.description}
             onChange={(e) => setAd({...ad,description:e.target.value})}
             />
-            <button className="btn btn-primary">Submit</button>
+            <button onClick={handleClick} className="btn btn-primary">Submit</button>
             <pre className="">{JSON.stringify(ad,null,4)}</pre>
         </>
     );
