@@ -1,8 +1,6 @@
-// export const DATABASE = "mongodb://127.0.0.1:27017/real_state";
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
-//const NodeGeocoder = require('node-geocoder');
-import NodeGeocoder from "node-geocoder"
+import NodeGeocoder from "node-geocoder";
 
 export const DATABASE = "mongodb+srv://real-state:CVKXUyi3VVYqh4qx@real-state.nsln4hx.mongodb.net/?retryWrites=true&w=majority&appName=real-state";
 export const EMAIL_FROM = 'Real State Bangladesh <mdnazimahmed64@gmail.com>';
@@ -20,8 +18,7 @@ const firebaseConfig = {
 };
 
 const options = {
-  provider: 'google',
-  apiKey: '978ae09d86824f24b8491496583d03d5', // for Mapquest, OpenCage, APlace, Google Premier
+  provider: 'openstreetmap',
   formatter: null // 'gpx', 'string', ...
 };
 

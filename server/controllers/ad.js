@@ -81,9 +81,35 @@ export const create = async(req, res) => {
       return res.json({error: "Description is required"})
     }
 
-    const geo = await config.GOOGLE_GEOCODER.geocode(address)
+    // Fetch geocoding data from OpenStreetMap Nominatim API
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${address}`
+    );
+    const data = await response.json();
+    const geo = data[0]; // Take the first result
+
+    console.log("geo", geo);
+
+    // Save the ad with the geocoded data
+    // const ad = new Ad({
+    //   photos,
+    //   description,
+    //   title,
+    //   address,
+    //   price,
+    //   type,
+    //   landsize,
+    //   location: {
+    //     type: "Point",
+    //     coordinates: [parseFloat(geo.lon), parseFloat(geo.lat)],
+    //   },
+    // });
+
+    // await ad.save();
+
+    // res.json({ success: true, ad });
   }catch(err){
-    res.json({error: "Something went wrong. Try again."})
     console.log(err);
+    res.status(500).json({ error: "Something went wrong. Try again." });
   }
 }

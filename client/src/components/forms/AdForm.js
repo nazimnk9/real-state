@@ -67,6 +67,7 @@ export default function AdForm({ action, type }) {
       setAd({ ...ad, loading: false });
     }
   };
+  
 
   return (
     <>
