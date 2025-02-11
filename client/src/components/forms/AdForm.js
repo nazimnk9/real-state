@@ -3,7 +3,7 @@ import AsyncSelect from "react-select/async"; // react-select's async select com
 import CurrencyInput from "react-currency-input-field";
 import ImageUpload from "./ImageUpload";
 import axios from "axios";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 export default function AdForm({ action, type }) {
@@ -24,6 +24,8 @@ export default function AdForm({ action, type }) {
     action,
   });
 
+  const navigate = useNavigate();
+
   // Fetch suggestions from OpenStreetMap Nominatim API
   const fetchSuggestions = async (inputValue) => {
     if (!inputValue) return [];
@@ -36,7 +38,7 @@ export default function AdForm({ action, type }) {
       value: place.display_name,
       lat: place.lat,
       lon: place.lon,
-    }));
+    }))
   };
 
   // Handle address selection
@@ -60,7 +62,7 @@ export default function AdForm({ action, type }) {
       } else {
         toast.success("Ad Created Successfully.");
         setAd({ ...ad, loading: false });
-        //navigate("/dashboard")
+        navigate("/dashboard")
       }
     } catch (err) {
       console.log(err);
@@ -135,10 +137,10 @@ export default function AdForm({ action, type }) {
         value={ad.description}
         onChange={(e) => setAd({ ...ad, description: e.target.value })}
       />
-      <button onClick={handleClick} className="btn btn-primary">
-        Submit
+      <button onClick={handleClick} className={`btn btn-primary mb-5 ${ad.loading ? "disabled" : ""}`}>
+        {ad.loading ? "Saving..." : "Submit"}
       </button>
-      <pre className="">{JSON.stringify(ad, null, 4)}</pre>
+      {/* <pre className="">{JSON.stringify(ad, null, 4)}</pre> */}
     </>
   );
 }
