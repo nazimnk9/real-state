@@ -93,7 +93,9 @@ export default function AdForm({ action, type }) {
         />
       </div>
 
-      <input
+      {type === "House" ? (
+        <>
+        <input
         type="number"
         min="0"
         className="form-control mb-3"
@@ -117,6 +119,10 @@ export default function AdForm({ action, type }) {
         value={ad.carpark}
         onChange={(e) => setAd({ ...ad, carpark: e.target.value })}
       />
+        </>
+      ) : (
+        ""
+      )}
       <input
         type="text"
         className="form-control mb-3"
