@@ -16,7 +16,7 @@ export default function AdForm({ action, type }) {
     bedrooms: "",
     bathrooms: "",
     carpark: "",
-    landSize: "",
+    landsize: "",
     title: "",
     description: "",
     loading: false,
@@ -127,8 +127,8 @@ export default function AdForm({ action, type }) {
         type="text"
         className="form-control mb-3"
         placeholder="Size of land"
-        value={ad.landSize}
-        onChange={(e) => setAd({ ...ad, landSize: e.target.value })}
+        value={ad.landsize}
+        onChange={(e) => setAd({ ...ad, landsize: e.target.value })}
       />
       <input
         type="text"
