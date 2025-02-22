@@ -99,7 +99,7 @@ export const create = async (req, res) => {
         coordinates: [geo?.[0]?.lon, geo?.[0]?.lat]
       },
       googleMap: geo,
-      slug: slugify(`${type}-${address}-${price}${nanoid(6)}`),
+      slug: slugify(`${type}-${address}-${price}-${nanoid(6)}`),
     }).save();
     const user = await User.findByIdAndUpdate(req.user._id, {
       $addToSet: { role: "Seller" },
