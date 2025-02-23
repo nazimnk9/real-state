@@ -3,6 +3,13 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import ImageGallery from "../components/misc/ImageGallery"
 import Logo from "../logo.svg"
+import AdFeatures from "../components/cards/AdFeatures"
+import { formatNumber } from "../helpers/ad"
+import dayjs from "dayjs"
+
+import relativeTime from "dayjs/plugin/relativeTime"
+
+dayjs.extend(relativeTime)
 
 
 export default function AdView() {
@@ -46,7 +53,21 @@ export default function AdView() {
 
     return (
         <>
-        <ImageGallery photos={generatePhotosArray(ad?.photos)} />
+        <div className="container-fluid">
+            <div className="row mt-2">
+                <div className="col-lg-4">
+                    <button className="btn btn-primary disabled mt-2">{ad?.type} for {ad?.action}</button>
+                    <div className="mt-4 mb-4">{ad?.sold ? "❌ Off market" : "✅ In market"}</div>
+                    <h1>{ad?.address}</h1>
+                    <AdFeatures ad={ad} />
+                    <h3 className="mt-4 h2">BD {formatNumber(ad.price)}</h3>
+                    <p className="text-muted">{dayjs(ad?.createdAt).fromNow()}</p>
+                </div>
+                <div className="col-lg-8">
+                <ImageGallery photos={generatePhotosArray(ad?.photos)} />
+                </div>
+            </div>
+        </div>
             <pre>{JSON.stringify({ ad, related }, null, 4)}</pre>
         </>
     )
