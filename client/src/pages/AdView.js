@@ -10,6 +10,7 @@ import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import LikeUnlike from "../components/misc/LikeUnlike"
 import MapCard from "../components/cards/MapCard"
+import HTMLRenderer from 'react-html-renderer'
 
 dayjs.extend(relativeTime)
 
@@ -75,12 +76,18 @@ export default function AdView() {
             </div>
             <div className="container mb-5">
                 <div className="row">
-                    <div className="col-lg-8 offset-lg-3 mt-3 mr-3">
-                    <MapCard ad={ad} />
+                    <div className="col-lg-8 offset-lg-2 mt-3">
+                        <MapCard ad={ad} />
+                        <br />
+                        <h1>{ad?.type} in {ad?.address} for {ad?.action} BD {ad?.price}</h1>
+                        <AdFeatures ad={ad} />
+                        <hr/>
+                        <h3 className="fw-bold">{ad?.title}</h3>
+                        <HTMLRenderer html = {ad?.description?.replaceAll(".","<br/><br/>")} />
                     </div>
                 </div>
             </div>
-            <pre>{JSON.stringify({ ad, related }, null, 4)}</pre>
+            {/* <pre>{JSON.stringify({ ad, related }, null, 4)}</pre> */}
         </>
     )
 }

@@ -66,7 +66,7 @@ export default function MapCard({ ad }) {
     }
 
     return (
-        <div style={{ width: "100%", height: "350px", marginLeft: "35px" }}>
+        <div style={{ width: "100%", height: "350px" }}>
             {/* Use MapContainer here, it will still work but we manually manage the map instance */}
             <div id="mapContainer" style={{ height: "100%", width: "100%" }} />
         </div>
