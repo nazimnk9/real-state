@@ -37,9 +37,9 @@ export default function Main() {
                 ""
             )}
             {loggedIn ? (
-                <div className="dropdown pointer">
+                <div className="dropdown">
                 <li>
-                    <a className="nav-link dropdown-toggle" data-bs-toggle="dropdown">{auth?.user?.name ? auth.user.name : auth.user.username}</a>
+                    <a className="nav-link dropdown-toggle pointer" data-bs-toggle="dropdown">{auth?.user?.name ? auth.user.name : auth.user.username}</a>
                     <ul className="dropdown-menu">
                         <li>
                             <NavLink className="nav-link" to="/dashboard">
@@ -47,7 +47,7 @@ export default function Main() {
                             </NavLink>
                         </li>
                         <li>
-                            <a onClick={logout} className="nav-link">Logout</a>
+                            <a onClick={logout} className="nav-link pointer">Logout</a>
                         </li>
                     </ul>
                 </li>

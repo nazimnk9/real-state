@@ -8,6 +8,8 @@ import { formatNumber } from "../helpers/ad"
 import dayjs from "dayjs"
 
 import relativeTime from "dayjs/plugin/relativeTime"
+import LikeUnlike from "../components/misc/LikeUnlike"
+import MapCard from "../components/cards/MapCard"
 
 dayjs.extend(relativeTime)
 
@@ -33,16 +35,16 @@ export default function AdView() {
     }
 
     const generatePhotosArray = (photos) => {
-        if(photos?.length > 0){
+        if (photos?.length > 0) {
             const x = photos?.length === 1 ? 2 : 4;
             let arr = []
-            photos.map((p) =>arr.push({
+            photos.map((p) => arr.push({
                 src: p.Location,
                 width: x,
                 height: x,
             }));
             return arr
-        } else{
+        } else {
             return [{
                 src: Logo,
                 width: 2,
@@ -53,21 +55,31 @@ export default function AdView() {
 
     return (
         <>
-        <div className="container-fluid">
-            <div className="row mt-2">
-                <div className="col-lg-4">
-                    <button className="btn btn-primary disabled mt-2">{ad?.type} for {ad?.action}</button>
-                    <div className="mt-4 mb-4">{ad?.sold ? "❌ Off market" : "✅ In market"}</div>
-                    <h1>{ad?.address}</h1>
-                    <AdFeatures ad={ad} />
-                    <h3 className="mt-4 h2">BD {formatNumber(ad.price)}</h3>
-                    <p className="text-muted">{dayjs(ad?.createdAt).fromNow()}</p>
-                </div>
-                <div className="col-lg-8">
-                <ImageGallery photos={generatePhotosArray(ad?.photos)} />
+            <div className="container-fluid">
+                <div className="row mt-2">
+                    <div className="col-lg-4">
+                        <div className="d-flex justify-content-between">
+                            <button className="btn btn-primary disabled mt-2">{ad?.type} for {ad?.action}</button>
+                            <LikeUnlike ad={ad} />
+                        </div>
+                        <div className="mt-4 mb-4">{ad?.sold ? "❌ Off market" : "✅ In market"}</div>
+                        <h1>{ad?.address}</h1>
+                        <AdFeatures ad={ad} />
+                        <h3 className="mt-4 h2">BD {formatNumber(ad.price)}</h3>
+                        <p className="text-muted">{dayjs(ad?.createdAt).fromNow()}</p>
+                    </div>
+                    <div className="col-lg-8">
+                        <ImageGallery photos={generatePhotosArray(ad?.photos)} />
+                    </div>
                 </div>
             </div>
-        </div>
+            <div className="container mb-5">
+                <div className="row">
+                    <div className="col-lg-8 offset-lg-3 mt-3 mr-3">
+                    <MapCard ad={ad} />
+                    </div>
+                </div>
+            </div>
             <pre>{JSON.stringify({ ad, related }, null, 4)}</pre>
         </>
     )

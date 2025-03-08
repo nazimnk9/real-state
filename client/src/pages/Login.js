@@ -2,12 +2,11 @@ import { useState } from "react";
 import axios from "axios";
 //import { API } from "../config";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 export default function Login() {
-    const [auth, setAuth] = useAuth();
+  const [auth, setAuth] = useAuth();
   //state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,6 +14,7 @@ export default function Login() {
 
   //hooks
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,10 +30,10 @@ export default function Login() {
         setLoading(false);
       } else {
         setAuth(data)
-        localStorage.setItem("auth",JSON.stringify(data))
+        localStorage.setItem("auth", JSON.stringify(data))
         toast.success("Login Successful");
         setLoading(false);
-        navigate("/");
+        location?.state !== null ? navigate(location.state) : navigate("/dashboard");
       }
       console.log(data);
     } catch (err) {

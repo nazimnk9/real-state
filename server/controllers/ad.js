@@ -120,48 +120,76 @@ export const create = async (req, res) => {
 }
 
 
-export const ads = async(req,res) => {
-  try{
-    const adsForSell = await Ad.find({action: "Sell"})
-    .select("-googleMap -location -photo.Key -photo.key -photo.ETag")
-    .sort({createdAt: -1})
-    .limit(12);
-    const adsForRent = await Ad.find({action: "Rent"})
-    .select("-googleMap -location -photo.Key -photo.key -photo.ETag")
-    .sort({createdAt: -1})
-    .limit(12);
+export const ads = async (req, res) => {
+  try {
+    const adsForSell = await Ad.find({ action: "Sell" })
+      .select("-googleMap -location -photo.Key -photo.key -photo.ETag")
+      .sort({ createdAt: -1 })
+      .limit(12);
+    const adsForRent = await Ad.find({ action: "Rent" })
+      .select("-googleMap -location -photo.Key -photo.key -photo.ETag")
+      .sort({ createdAt: -1 })
+      .limit(12);
 
-    res.json({adsForSell, adsForRent})
-  }catch(err) {
+    res.json({ adsForSell, adsForRent })
+  } catch (err) {
     console.log(err);
-    
+
   }
 }
 
-export const read = async(req, res) =>{
-  try{
-    const ad = await Ad.findOne({slug: req.params.slug}).populate(
+export const read = async (req, res) => {
+  try {
+    const ad = await Ad.findOne({ slug: req.params.slug }).populate(
       "postedBy",
-       "name username email phone company photo.Location"
-      );
-      // related
-      const related = await Ad.find({
-        _id: {$ne: ad._id},
-        action: ad.action,
-        type: ad.type,
-        
-        address: {
-          $regex: ad.googleMap[0].name,
-          $options: "i",
-        },
-        
-      }).limit(3).select("-photos.Key -googleMap");
-      //console.log(related);
-      
-      res.json({ad, related})
-      
-  }catch(err){
+      "name username email phone company photo.Location"
+    );
+    // related
+    const related = await Ad.find({
+      _id: { $ne: ad._id },
+      action: ad.action,
+      type: ad.type,
+
+      address: {
+        $regex: ad.googleMap[0].name,
+        $options: "i",
+      },
+
+    }).limit(3).select("-photos.Key -googleMap");
+    //console.log(related);
+
+    res.json({ ad, related })
+
+  } catch (err) {
     console.log(err);
-    
+
+  }
+}
+
+export const addToWishlist = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.user._id, {
+      $addToSet: { wishlist: req.body.adId }
+    }, { new: true }
+    );
+    const { password, resetCode, ...rest } = user._doc
+    res.json(rest);
+  } catch (err) {
+    console.log(err);
+
+  }
+}
+
+export const removeFromWishlist = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.user._id, {
+      $pull: { wishlist: req.params.adId }
+    }, { new: true }
+    );
+    const { password, resetCode, ...rest } = user._doc
+    res.json(rest);
+  } catch (err) {
+    console.log(err);
+
   }
 }
