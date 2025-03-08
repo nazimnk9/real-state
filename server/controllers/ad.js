@@ -151,7 +151,7 @@ export const read = async (req, res) => {
       type: ad.type,
 
       address: {
-        $regex: ad.googleMap[0].name,
+        $regex: ad.googleMap[0]?.name,
         $options: "i",
       },
 
