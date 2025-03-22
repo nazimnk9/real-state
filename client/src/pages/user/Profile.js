@@ -40,6 +40,28 @@ export default function Profile() {
         e.preventDefault()
         try {
             console.log({ username, name, email, company, address, phone, about, photo });
+            setLoading(true);
+            const {data} = await axios.put("/update-profile", {
+                username, 
+                name, 
+                email, 
+                company, 
+                address, 
+                phone, 
+                about, 
+                photo
+            });
+            if(data?.error){
+                toast.error(data.error)
+            }else{
+                console.log("Update Profile response =>", data);
+                setAuth({...auth, user: data})
+                let fromLS = JSON.parse(localStorage.getItem("auth"))
+                fromLS.user = data
+                localStorage.setItem("auth",JSON.stringify(fromLS))
+                setLoading(false)
+                toast.success("Profile Updated");
+            }
 
         } catch (err) {
             console.log(err);
