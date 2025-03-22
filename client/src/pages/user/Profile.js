@@ -54,7 +54,6 @@ export default function Profile() {
             if(data?.error){
                 toast.error(data.error)
             }else{
-                console.log("Update Profile response =>", data);
                 setAuth({...auth, user: data})
                 let fromLS = JSON.parse(localStorage.getItem("auth"))
                 fromLS.user = data
