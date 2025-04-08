@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/auth";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast"
+import axios from "axios";
 
 export default function ContactSeller({ ad }) {
     //context
@@ -14,6 +16,39 @@ export default function ContactSeller({ ad }) {
     //hooks
     const navigate = useNavigate();
     const loggedIn = auth.user !== null && auth.token !== "";
+    useEffect(()=>{
+        if(loggedIn){
+            setName(auth?.user?.name)
+            setEmail(auth?.user?.email)
+            setPhone(auth?.user?.phone)
+        }
+    },[loggedIn])
+
+    const handleSubmit = async(e) => {
+        e.preventDefault();
+        setLoading(true)
+        try{
+            const {data} = await axios.post("/contact-seller",{
+                name,
+                email,
+                phone,
+                message,
+                adId: ad?._id,
+            });
+            if(data?.error){
+                toast.error(data?.error)
+                setLoading(false)
+            }else{
+                toast.success("You enquiry has been emailed to the seller.")
+                setMessage("")
+            }
+        }catch(err){
+            console.log(err);
+            toast.error("Something went worng. Try Again.")
+            setLoading(false)
+        }
+    }
+
     return <>
         <div className="row">
             <div className="col-lg-8 offset-lg-2">
@@ -21,7 +56,7 @@ export default function ContactSeller({ ad }) {
                     Contact{" "}
                     {ad?.postedBy?.name ? ad?.postedBy?.name : ad?.postedBy?.username}
                 </h3>
-                <form>
+                <form onSubmit={handleSubmit}>
                     <textarea
                         name="message"
                         className="form-control mb-3"
