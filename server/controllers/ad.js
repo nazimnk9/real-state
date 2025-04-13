@@ -4,6 +4,8 @@ import { nanoid } from "nanoid";
 import slugify from "slugify";
 import Ad from "../models/ad.js";
 import User from "../models/user.js";
+import { emailTemplate } from "../helpers/email.js";
+import nodemailer from "nodemailer";
 
 export const uploadImage = async (req, res) => {
   try {
@@ -203,6 +205,55 @@ export const contactSeller = async(req,res)=>{
     });
     if(!user){
       return res.json({error: "Could not find user with that email"})
+    }else{
+      const transporter = nodemailer.createTransport({
+            /* Configure your email transport settings here */
+            // For example, if you're using Gmail as your SMTP server:
+            service: "Gmail",
+            auth: {
+              user: "mdnazimahmed64@gmail.com",
+              pass: "wrdrygfjnqgygixe",
+            },
+          });
+      
+          // // Send email using Nodemailer
+          // const mailOptions = {
+          //   from: config.EMAIL_FROM,
+          //   to: email,
+          //   subject: 'Welcome to Real-State',
+          //   html:
+          //     `
+          //       <p>Please click the link below to activate your account.</p>
+          //       <a href="${config.CLIENT_URL}/auth/account-activate/${token}">Activate my account</a>
+      
+          //     `,
+          // };
+      
+          transporter.sendMail(
+            emailTemplate(
+              ad.postedBy.email,
+              `
+            <p>You have received a new customer enquiry</p>
+            <h4>Customer details</h4>
+            <p>Name: ${name}</p>
+            <p>Email: ${email}</p>
+            <p>Phone: ${phone}</p>
+            <p>Message: ${message}</p>
+            <a href="${config.CLIENT_URL}/ad/${ad.slug}">${ad.type} in ${ad.address} for ${ad.action} ${ad.price}</a>
+            `,
+              email,
+              "New enquiry received"
+            ),
+            (error, info) => {
+              if (error) {
+                console.log(error);
+                return res.json({ ok: false });
+              } else {
+                console.log(info);
+                return res.json({ ok: true });
+              }
+            }
+          );
     }
   }catch(err){
     console.log(err);
