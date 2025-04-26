@@ -196,43 +196,43 @@ export const removeFromWishlist = async (req, res) => {
   }
 }
 
-export const contactSeller = async(req,res)=>{
-  try{
-    const {name,email,message,phone,adId} = req.body;
-    const ad = await Ad.findById(adId).populate("postedBy","email");
-    const user = await User.findByIdAndUpdate(req.user._id,{
-      $addToSet: {enquiredProperties: adId},
+export const contactSeller = async (req, res) => {
+  try {
+    const { name, email, message, phone, adId } = req.body;
+    const ad = await Ad.findById(adId).populate("postedBy", "email");
+    const user = await User.findByIdAndUpdate(req.user._id, {
+      $addToSet: { enquiredProperties: adId },
     });
-    if(!user){
-      return res.json({error: "Could not find user with that email"})
-    }else{
+    if (!user) {
+      return res.json({ error: "Could not find user with that email" })
+    } else {
       const transporter = nodemailer.createTransport({
-            /* Configure your email transport settings here */
-            // For example, if you're using Gmail as your SMTP server:
-            service: "Gmail",
-            auth: {
-              user: "mdnazimahmed64@gmail.com",
-              pass: "wrdrygfjnqgygixe",
-            },
-          });
-      
-          // // Send email using Nodemailer
-          // const mailOptions = {
-          //   from: config.EMAIL_FROM,
-          //   to: email,
-          //   subject: 'Welcome to Real-State',
-          //   html:
-          //     `
-          //       <p>Please click the link below to activate your account.</p>
-          //       <a href="${config.CLIENT_URL}/auth/account-activate/${token}">Activate my account</a>
-      
-          //     `,
-          // };
-      
-          transporter.sendMail(
-            emailTemplate(
-              ad.postedBy.email,
-              `
+        /* Configure your email transport settings here */
+        // For example, if you're using Gmail as your SMTP server:
+        service: "Gmail",
+        auth: {
+          user: "mdnazimahmed64@gmail.com",
+          pass: "wrdrygfjnqgygixe",
+        },
+      });
+
+      // // Send email using Nodemailer
+      // const mailOptions = {
+      //   from: config.EMAIL_FROM,
+      //   to: email,
+      //   subject: 'Welcome to Real-State',
+      //   html:
+      //     `
+      //       <p>Please click the link below to activate your account.</p>
+      //       <a href="${config.CLIENT_URL}/auth/account-activate/${token}">Activate my account</a>
+
+      //     `,
+      // };
+
+      transporter.sendMail(
+        emailTemplate(
+          ad.postedBy.email,
+          `
             <p>You have received a new customer enquiry</p>
             <h4>Customer details</h4>
             <p>Name: ${name}</p>
@@ -241,22 +241,40 @@ export const contactSeller = async(req,res)=>{
             <p>Message: ${message}</p>
             <a href="${config.CLIENT_URL}/ad/${ad.slug}">${ad.type} in ${ad.address} for ${ad.action} ${ad.price}</a>
             `,
-              email,
-              "New enquiry received"
-            ),
-            (error, info) => {
-              if (error) {
-                console.log(error);
-                return res.json({ ok: false });
-              } else {
-                console.log(info);
-                return res.json({ ok: true });
-              }
-            }
-          );
+          email,
+          "New enquiry received"
+        ),
+        (error, info) => {
+          if (error) {
+            console.log(error);
+            return res.json({ ok: false });
+          } else {
+            console.log(info);
+            return res.json({ ok: true });
+          }
+        }
+      );
     }
-  }catch(err){
+  } catch (err) {
     console.log(err);
-    
+
+  }
+}
+
+export const userAds = async (req, res) => {
+  try {
+    const perPage = 2;
+    const page = req.params.page ? req.params.page : 1;
+    const total = await Ad.find({ postedBy: req.user._id });
+    const ads = await Ad.find({ postedBy: req.user._id })
+      .select("-photos.Key -photos.key -photos.ETag -photos.Bucket -location -googleMap")
+      .populate("postedBy", "name email username phone company")
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .sort({ createdAt: -1 })
+    res.json({ ads, total: total.length })
+  } catch (err) {
+    console.log(err);
+
   }
 }

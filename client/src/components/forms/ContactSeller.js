@@ -39,6 +39,7 @@ export default function ContactSeller({ ad }) {
                 toast.error(data?.error)
                 setLoading(false)
             }else{
+                setLoading(false)
                 toast.success("You enquiry has been emailed to the seller.")
                 setMessage("")
             }
